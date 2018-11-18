@@ -7,7 +7,6 @@ package interfaz;
 
 import dominio.Jugador;
 import dominio.Sistema;
-import static javax.swing.JFrame.EXIT_ON_CLOSE;
 import javax.swing.JOptionPane;
 
 /**
@@ -29,7 +28,6 @@ public class AltaJugadores extends javax.swing.JDialog {
         super(parent, modal);
         initComponents();
         sistema = sis;
-        sistema.registrarJugador(new Jugador("as","as",55));
         this.setResizable(false);
         this.setLocationRelativeTo(null);
     }

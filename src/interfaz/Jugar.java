@@ -6,7 +6,14 @@
 package interfaz;
 
 import dominio.Jugador;
+import dominio.Movimiento;
+import dominio.Partida;
 import dominio.Sistema;
+import dominio.TipoPartida;
+import java.util.ArrayList;
+import java.util.Date;
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -15,6 +22,9 @@ import dominio.Sistema;
 public class Jugar extends javax.swing.JDialog {
 
     private static Sistema sistema;
+    private TipoPartida tipoPartida;
+    private String tipoTablero;
+
     /**
      * Creates new form Jugar
      */
@@ -27,9 +37,29 @@ public class Jugar extends javax.swing.JDialog {
         super(parent, modal);
         initComponents();
         sistema = sis;
-        sistema.registrarJugador(new Jugador("as","as",55));
+        this.setResizable(false);
+        this.setLocationRelativeTo(null);
+        rbtNormal.setSelected(true);
+        tipoTablero = "NORMAL";
+        rbtPrimeraFicha.setSelected(true);
+        tipoPartida = TipoPartida.UNA_FICHA_AL_OTRO_LADO;
+        panelMovimientos.setVisible(false);
+        DefaultComboBoxModel modelo = new DefaultComboBoxModel();
+        DefaultComboBoxModel modelo2 = new DefaultComboBoxModel();
+        try {
+            for (Jugador jugador : sistema.getJugadores()) {
+                modelo.addElement(jugador);
+                modelo2.addElement(jugador);
+            }
+            cbJugador1.setModel(modelo);
+            cbJugador2.setModel(modelo2);
+            cbJugador1.setSelectedIndex(0);
+            cbJugador2.setSelectedIndex(1);
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
     }
-    
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -39,21 +69,352 @@ public class Jugar extends javax.swing.JDialog {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        buttonGroup1 = new javax.swing.ButtonGroup();
+        buttonGroup2 = new javax.swing.ButtonGroup();
+        jPanel1 = new javax.swing.JPanel();
+        jPanel2 = new javax.swing.JPanel();
+        jLabel1 = new javax.swing.JLabel();
+        jPanel3 = new javax.swing.JPanel();
+        rbtNormal = new javax.swing.JRadioButton();
+        rbtReducido = new javax.swing.JRadioButton();
+        jPanel4 = new javax.swing.JPanel();
+        rbtCantidadMovimientos = new javax.swing.JRadioButton();
+        rbtPrimeraFicha = new javax.swing.JRadioButton();
+        rbtTodasFichas = new javax.swing.JRadioButton();
+        panelMovimientos = new javax.swing.JPanel();
+        jLabel4 = new javax.swing.JLabel();
+        txtCantidad = new javax.swing.JTextField();
+        jPanel5 = new javax.swing.JPanel();
+        jLabel2 = new javax.swing.JLabel();
+        jLabel3 = new javax.swing.JLabel();
+        cbJugador1 = new javax.swing.JComboBox<>();
+        cbJugador2 = new javax.swing.JComboBox<>();
+        btnJugar = new javax.swing.JButton();
+
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+
+        jPanel1.setBackground(new java.awt.Color(255, 255, 255));
+
+        jLabel1.setFont(new java.awt.Font("Yu Gothic UI", 2, 36)); // NOI18N
+        jLabel1.setText("Configuración de partida");
+
+        jPanel3.setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED), "Tipo de tablero"));
+
+        buttonGroup1.add(rbtNormal);
+        rbtNormal.setText("Normal");
+        rbtNormal.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                rbtNormalActionPerformed(evt);
+            }
+        });
+
+        buttonGroup1.add(rbtReducido);
+        rbtReducido.setText("Reducido");
+        rbtReducido.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                rbtReducidoActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
+        jPanel3.setLayout(jPanel3Layout);
+        jPanel3Layout.setHorizontalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel3Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(rbtNormal)
+                    .addComponent(rbtReducido))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+        jPanel3Layout.setVerticalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel3Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(rbtNormal)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(rbtReducido)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
+        jPanel4.setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED), "Forma de juego"));
+
+        buttonGroup2.add(rbtCantidadMovimientos);
+        rbtCantidadMovimientos.setText("Cantidad de movimientos");
+        rbtCantidadMovimientos.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                rbtCantidadMovimientosActionPerformed(evt);
+            }
+        });
+
+        buttonGroup2.add(rbtPrimeraFicha);
+        rbtPrimeraFicha.setText("Primera ficha sobre borde opuesto");
+        rbtPrimeraFicha.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                rbtPrimeraFichaActionPerformed(evt);
+            }
+        });
+
+        buttonGroup2.add(rbtTodasFichas);
+        rbtTodasFichas.setText("Todas las fichas sobre borde opuesto");
+        rbtTodasFichas.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                rbtTodasFichasActionPerformed(evt);
+            }
+        });
+
+        panelMovimientos.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+
+        jLabel4.setText("Cantidad de movimientos:");
+
+        javax.swing.GroupLayout panelMovimientosLayout = new javax.swing.GroupLayout(panelMovimientos);
+        panelMovimientos.setLayout(panelMovimientosLayout);
+        panelMovimientosLayout.setHorizontalGroup(
+            panelMovimientosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(panelMovimientosLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jLabel4)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(txtCantidad)
+                .addContainerGap())
+        );
+        panelMovimientosLayout.setVerticalGroup(
+            panelMovimientosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(panelMovimientosLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(panelMovimientosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(txtCantidad, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel4))
+                .addContainerGap(12, Short.MAX_VALUE))
+        );
+
+        javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
+        jPanel4.setLayout(jPanel4Layout);
+        jPanel4Layout.setHorizontalGroup(
+            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel4Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(panelMovimientos, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(jPanel4Layout.createSequentialGroup()
+                        .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(rbtPrimeraFicha)
+                            .addComponent(rbtCantidadMovimientos)
+                            .addComponent(rbtTodasFichas))
+                        .addGap(0, 68, Short.MAX_VALUE)))
+                .addContainerGap())
+        );
+        jPanel4Layout.setVerticalGroup(
+            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel4Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(rbtPrimeraFicha)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(rbtTodasFichas)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(rbtCantidadMovimientos)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(panelMovimientos, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
+        jPanel5.setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED), "Jugadores"));
+
+        jLabel2.setText("Jugador 1");
+
+        jLabel3.setText("Jugador 2");
+
+        cbJugador1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cbJugador1ActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
+        jPanel5.setLayout(jPanel5Layout);
+        jPanel5Layout.setHorizontalGroup(
+            jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel5Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(cbJugador2, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(cbJugador1, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel5Layout.createSequentialGroup()
+                        .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel2)
+                            .addComponent(jLabel3))
+                        .addGap(0, 0, Short.MAX_VALUE)))
+                .addContainerGap())
+        );
+        jPanel5Layout.setVerticalGroup(
+            jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel5Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jLabel2)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(cbJugador1, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jLabel3)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(cbJugador2, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
+        btnJugar.setFont(new java.awt.Font("MS Reference Sans Serif", 0, 18)); // NOI18N
+        btnJugar.setText("Comenzar partida");
+        btnJugar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnJugarActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
+        jPanel2.setLayout(jPanel2Layout);
+        jPanel2Layout.setHorizontalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 463, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 105, Short.MAX_VALUE))
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jPanel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(btnJugar, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
+        );
+        jPanel2Layout.setVerticalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 68, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jPanel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(18, 18, 18)
+                .addComponent(btnJugar, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 400, Short.MAX_VALUE)
+            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 300, Short.MAX_VALUE)
+            .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void rbtNormalActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rbtNormalActionPerformed
+        tipoTablero = "NORMAL";
+    }//GEN-LAST:event_rbtNormalActionPerformed
+
+    private void cbJugador1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbJugador1ActionPerformed
+
+    }//GEN-LAST:event_cbJugador1ActionPerformed
+
+    private void rbtCantidadMovimientosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rbtCantidadMovimientosActionPerformed
+        tipoPartida = TipoPartida.CANTIDAD_MOVIMIENTOS;
+        if (rbtCantidadMovimientos.isSelected()) {
+            panelMovimientos.setVisible(true);
+        }
+    }//GEN-LAST:event_rbtCantidadMovimientosActionPerformed
+
+    private void rbtPrimeraFichaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rbtPrimeraFichaActionPerformed
+        tipoPartida = TipoPartida.UNA_FICHA_AL_OTRO_LADO;
+        if (!rbtCantidadMovimientos.isSelected()) {
+            panelMovimientos.setVisible(false);
+        }
+    }//GEN-LAST:event_rbtPrimeraFichaActionPerformed
+
+    private void rbtTodasFichasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rbtTodasFichasActionPerformed
+        tipoPartida = TipoPartida.TODAS_LAS_FICHAS_AL_OTRO_LADO;
+        if (!rbtCantidadMovimientos.isSelected()) {
+            panelMovimientos.setVisible(false);
+        }
+    }//GEN-LAST:event_rbtTodasFichasActionPerformed
+
+    private boolean validarCantidadMovimientos() {
+        if (!"".equals(txtCantidad.getText().trim())) {
+            try {
+                Integer.parseInt(txtCantidad.getText());
+            } catch (NumberFormatException e) {
+                JOptionPane.showMessageDialog(this, "El formato de la cantidad no es válido", "Error", JOptionPane.ERROR_MESSAGE);
+                return false;
+            }
+            return true;
+        } else {
+            JOptionPane.showMessageDialog(this, "El campo cantidad no puede ser vacío", "Error", JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
+    }
+
+    private void btnJugarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnJugarActionPerformed
+        if (cbJugador1.getSelectedIndex() != cbJugador2.getSelectedIndex()) {
+            if (rbtCantidadMovimientos.isSelected()) {
+                if (validarCantidadMovimientos()) {
+                    comenzarPartida();
+                }
+            } else {
+                comenzarPartida();
+            }
+        } else {
+            JOptionPane.showMessageDialog(this, "El jugador 1 no puede ser el mismo que el jugador 2", "Error", JOptionPane.ERROR_MESSAGE);
+        }
+
+
+    }//GEN-LAST:event_btnJugarActionPerformed
+
+    private void rbtReducidoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rbtReducidoActionPerformed
+        tipoTablero = "REDUCIDO";
+    }//GEN-LAST:event_rbtReducidoActionPerformed
+
+    private void comenzarPartida() {
+        int opcion = JOptionPane.showConfirmDialog(this, "Jugador 1: " + ((Jugador) cbJugador1.getSelectedItem()).getAlias() + "\nJugador 2: " + ((Jugador) cbJugador2.getSelectedItem()).getAlias() + "\nTipo de Tablero: " + tipoTablero + "\nTipo de Partida: " + TipoPartida.getString(tipoPartida) + "\n\nComenzar partida con esta configuración?", "Confirmación de datos", JOptionPane.YES_NO_OPTION);
+        if (opcion == 0) {// yes option
+            sistema.setJugador1((Jugador) cbJugador1.getSelectedItem());
+            sistema.setJugador2((Jugador) cbJugador2.getSelectedItem());
+            Partida partidaActual;
+            if (tipoPartida == TipoPartida.CANTIDAD_MOVIMIENTOS) {
+                partidaActual = new Partida(new Date(), (Jugador) cbJugador1.getSelectedItem(), (Jugador) cbJugador2.getSelectedItem(), tipoPartida, new ArrayList<Movimiento>(), Integer.parseInt(txtCantidad.getText()));
+            } else {
+                partidaActual = new Partida(new Date(), (Jugador) cbJugador1.getSelectedItem(), (Jugador) cbJugador2.getSelectedItem(), tipoPartida, new ArrayList<Movimiento>());
+            }
+            sistema.setPartidaActual(partidaActual);
+            sistema.inicializarTablero(tipoTablero);
+            this.dispose();
+        }
+    }
 
     /**
      * @param args the command line arguments
@@ -98,5 +459,26 @@ public class Jugar extends javax.swing.JDialog {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnJugar;
+    private javax.swing.ButtonGroup buttonGroup1;
+    private javax.swing.ButtonGroup buttonGroup2;
+    private javax.swing.JComboBox<String> cbJugador1;
+    private javax.swing.JComboBox<String> cbJugador2;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
+    private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel2;
+    private javax.swing.JPanel jPanel3;
+    private javax.swing.JPanel jPanel4;
+    private javax.swing.JPanel jPanel5;
+    private javax.swing.JPanel panelMovimientos;
+    private javax.swing.JRadioButton rbtCantidadMovimientos;
+    private javax.swing.JRadioButton rbtNormal;
+    private javax.swing.JRadioButton rbtPrimeraFicha;
+    private javax.swing.JRadioButton rbtReducido;
+    private javax.swing.JRadioButton rbtTodasFichas;
+    private javax.swing.JTextField txtCantidad;
     // End of variables declaration//GEN-END:variables
 }
