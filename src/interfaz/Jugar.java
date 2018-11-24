@@ -9,6 +9,7 @@ import dominio.Jugador;
 import dominio.Movimiento;
 import dominio.Partida;
 import dominio.Sistema;
+import dominio.Tablero;
 import dominio.TipoPartida;
 import java.util.ArrayList;
 import java.util.Date;
@@ -19,28 +20,25 @@ import javax.swing.JOptionPane;
  *
  * @author LuisPastorino
  */
-public class Jugar extends javax.swing.JDialog {
+public class Jugar extends javax.swing.JFrame {
 
     private static Sistema sistema;
     private TipoPartida tipoPartida;
-    private String tipoTablero;
 
     /**
      * Creates new form Jugar
      */
-    public Jugar(java.awt.Frame parent, boolean modal) {
-        super(parent, modal);
+    public Jugar() {
+        super();
         initComponents();
     }
 
-    public Jugar(java.awt.Frame parent, boolean modal, Sistema sis) {
-        super(parent, modal);
+    public Jugar(Sistema sis) {
+        super();
         initComponents();
         sistema = sis;
         this.setResizable(false);
         this.setLocationRelativeTo(null);
-        rbtNormal.setSelected(true);
-        tipoTablero = "NORMAL";
         rbtPrimeraFicha.setSelected(true);
         tipoPartida = TipoPartida.UNA_FICHA_AL_OTRO_LADO;
         panelMovimientos.setVisible(false);
@@ -74,9 +72,6 @@ public class Jugar extends javax.swing.JDialog {
         jPanel1 = new javax.swing.JPanel();
         jPanel2 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
-        jPanel3 = new javax.swing.JPanel();
-        rbtNormal = new javax.swing.JRadioButton();
-        rbtReducido = new javax.swing.JRadioButton();
         jPanel4 = new javax.swing.JPanel();
         rbtCantidadMovimientos = new javax.swing.JRadioButton();
         rbtPrimeraFicha = new javax.swing.JRadioButton();
@@ -97,45 +92,6 @@ public class Jugar extends javax.swing.JDialog {
 
         jLabel1.setFont(new java.awt.Font("Yu Gothic UI", 2, 36)); // NOI18N
         jLabel1.setText("Configuración de partida");
-
-        jPanel3.setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED), "Tipo de tablero"));
-
-        buttonGroup1.add(rbtNormal);
-        rbtNormal.setText("Normal");
-        rbtNormal.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                rbtNormalActionPerformed(evt);
-            }
-        });
-
-        buttonGroup1.add(rbtReducido);
-        rbtReducido.setText("Reducido");
-        rbtReducido.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                rbtReducidoActionPerformed(evt);
-            }
-        });
-
-        javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
-        jPanel3.setLayout(jPanel3Layout);
-        jPanel3Layout.setHorizontalGroup(
-            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel3Layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(rbtNormal)
-                    .addComponent(rbtReducido))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
-        jPanel3Layout.setVerticalGroup(
-            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel3Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(rbtNormal)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(rbtReducido)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
 
         jPanel4.setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED), "Forma de juego"));
 
@@ -215,7 +171,7 @@ public class Jugar extends javax.swing.JDialog {
                 .addComponent(rbtCantidadMovimientos)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(panelMovimientos, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(102, Short.MAX_VALUE))
         );
 
         jPanel5.setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED), "Jugadores"));
@@ -279,9 +235,7 @@ public class Jugar extends javax.swing.JDialog {
                         .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 463, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(0, 105, Short.MAX_VALUE))
                     .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(jPanel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addComponent(btnJugar, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
@@ -290,15 +244,12 @@ public class Jugar extends javax.swing.JDialog {
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
-                .addContainerGap()
+                .addGap(6, 6, 6)
                 .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 68, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(jPanel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(jPanel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addGap(18, 18, 18)
                 .addComponent(btnJugar, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
@@ -334,10 +285,6 @@ public class Jugar extends javax.swing.JDialog {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-
-    private void rbtNormalActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rbtNormalActionPerformed
-        tipoTablero = "NORMAL";
-    }//GEN-LAST:event_rbtNormalActionPerformed
 
     private void cbJugador1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbJugador1ActionPerformed
 
@@ -395,12 +342,8 @@ public class Jugar extends javax.swing.JDialog {
 
     }//GEN-LAST:event_btnJugarActionPerformed
 
-    private void rbtReducidoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rbtReducidoActionPerformed
-        tipoTablero = "REDUCIDO";
-    }//GEN-LAST:event_rbtReducidoActionPerformed
-
     private void comenzarPartida() {
-        int opcion = JOptionPane.showConfirmDialog(this, "Jugador 1: " + ((Jugador) cbJugador1.getSelectedItem()).getAlias() + "\nJugador 2: " + ((Jugador) cbJugador2.getSelectedItem()).getAlias() + "\nTipo de Tablero: " + tipoTablero + "\nTipo de Partida: " + TipoPartida.getString(tipoPartida) + "\n\nComenzar partida con esta configuración?", "Confirmación de datos", JOptionPane.YES_NO_OPTION);
+        int opcion = JOptionPane.showConfirmDialog(this, "Jugador 1: " + ((Jugador) cbJugador1.getSelectedItem()).getAlias() + "\nJugador 2: " + ((Jugador) cbJugador2.getSelectedItem()).getAlias() + "\nTipo de Partida: " + TipoPartida.getString(tipoPartida) + "\n\nComenzar partida con esta configuración?", "Confirmación de datos", JOptionPane.YES_NO_OPTION);
         if (opcion == 0) {// yes option
             sistema.setJugador1((Jugador) cbJugador1.getSelectedItem());
             sistema.setJugador2((Jugador) cbJugador2.getSelectedItem());
@@ -411,8 +354,11 @@ public class Jugar extends javax.swing.JDialog {
                 partidaActual = new Partida(new Date(), (Jugador) cbJugador1.getSelectedItem(), (Jugador) cbJugador2.getSelectedItem(), tipoPartida, new ArrayList<Movimiento>());
             }
             sistema.setPartidaActual(partidaActual);
-            sistema.inicializarTablero(tipoTablero);
+            sistema.setTablero(new Tablero());
+            VentanaTablero tablero = new VentanaTablero(sistema);
+            tablero.setVisible(true);
             this.dispose();
+            
         }
     }
 
@@ -446,14 +392,7 @@ public class Jugar extends javax.swing.JDialog {
         /* Create and display the dialog */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                Jugar dialog = new Jugar(new javax.swing.JFrame(), true);
-                dialog.addWindowListener(new java.awt.event.WindowAdapter() {
-                    @Override
-                    public void windowClosing(java.awt.event.WindowEvent e) {
-                        System.exit(0);
-                    }
-                });
-                dialog.setVisible(true);
+                new Jugar().setVisible(true);
             }
         });
     }
@@ -470,14 +409,11 @@ public class Jugar extends javax.swing.JDialog {
     private javax.swing.JLabel jLabel4;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
-    private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
     private javax.swing.JPanel jPanel5;
     private javax.swing.JPanel panelMovimientos;
     private javax.swing.JRadioButton rbtCantidadMovimientos;
-    private javax.swing.JRadioButton rbtNormal;
     private javax.swing.JRadioButton rbtPrimeraFicha;
-    private javax.swing.JRadioButton rbtReducido;
     private javax.swing.JRadioButton rbtTodasFichas;
     private javax.swing.JTextField txtCantidad;
     // End of variables declaration//GEN-END:variables

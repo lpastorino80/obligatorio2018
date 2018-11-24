@@ -5,6 +5,8 @@
  */
 package dominio;
 
+import javax.swing.JButton;
+
 /**
  *
  * @author LuisPastorino, Carolina Perez
@@ -18,7 +20,15 @@ public class Ficha {
     private String nro;
     private String color;
     private Jugador jugador;
+    private JButton boton;
 
+    public Ficha(String nro, String color, Jugador jugador, JButton boton) {
+        this.nro = nro;
+        this.color = color;
+        this.jugador = jugador;
+        this.boton = boton;
+    }
+    
     public Ficha(String nro, String color, Jugador jugador) {
         this.nro = nro;
         this.color = color;
@@ -28,6 +38,12 @@ public class Ficha {
     public Ficha(String nro, String color) {
         this.nro = nro;
         this.color = color;
+    }
+    
+    public Ficha(String nro, String color, JButton boton) {
+        this.nro = nro;
+        this.color = color;
+        this.boton = boton;
     }
 
     public String getNro() {
@@ -52,6 +68,14 @@ public class Ficha {
 
     public void setJugador(Jugador jugador) {
         this.jugador = jugador;
+    }
+    
+    public JButton getBoton() {
+        return boton;
+    }
+
+    public void setBoton(JButton boton) {
+        this.boton = boton;
     }
 
     @Override

@@ -65,9 +65,9 @@ public class Sistema {
         }
     }
     
-    public void inicializarTablero(String tipoVisualizacion) {
-        tablero = new Tablero(tipoVisualizacion, this.getJugador1(), this.getJugador2());
-    }
+//    public void inicializarTablero(String tipoVisualizacion) {
+//        tablero = new Tablero(tipoVisualizacion, this.getJugador1(), this.getJugador2());
+//    }
 
     public ArrayList<Jugador> getJugadores() {
         return jugadores;
@@ -177,13 +177,7 @@ public class Sistema {
                 if (opcion.equals("X")) {
                     this.terminarPartida(jugador);
                     valido = true;
-                } else if (opcion.equals("VERN")) {
-                    this.getTablero().setTipo("NORMAL");
-                    valido = true;
-                } else if (opcion.equals("VERR")) {
-                    this.getTablero().setTipo("REDUCIDO");  
-                    valido = true;
-                }
+                } 
             }            
         } catch (Exception e) {
             throw new Exception("Movimiento no válido");
