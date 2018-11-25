@@ -230,7 +230,6 @@ public class Index extends javax.swing.JFrame {
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
         ReplicarPartida ventana = new ReplicarPartida(this, true, sistema);
         ventana.setVisible(true);
-        //cambio
 
     }//GEN-LAST:event_jButton4ActionPerformed
 

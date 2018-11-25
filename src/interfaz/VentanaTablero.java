@@ -11,7 +11,10 @@ import dominio.Sistema;
 import dominio.Tablero;
 import java.awt.event.*;
 import java.awt.*;
+import java.util.ArrayList;
 import javax.swing.*;
+import javax.swing.border.Border;
+import javax.swing.border.LineBorder;
 
 /**
  *
@@ -19,13 +22,31 @@ import javax.swing.*;
  */
 public class VentanaTablero extends javax.swing.JFrame {
 
-    private Sistema modelo;
+    private Sistema sistema;
     private Ficha[][] tablero;
     private Jugador jugador1;
     private Jugador jugador2;
-    private Jugador turno;
-    private int contadorTurno = 0;
+    private int contadorMovimientos = 0; // setear en par al arrancar una jugada
     private String fichaAnterior = "";
+    private int cantidadMovimientosTotales = 0;
+    private ArrayList<String> posiblesJugadas = new ArrayList<>();
+    private ArrayList<Integer> posiblesMovimientos = new ArrayList<>();
+
+    public int getCantidadMovimientosTotales() {
+        return cantidadMovimientosTotales;
+    }
+
+    public void setCantidadMovimientosTotales(int cantidadMovimientosTotales) {
+        this.cantidadMovimientosTotales = cantidadMovimientosTotales;
+    }
+
+    public int getContadorMovimientos() {
+        return contadorMovimientos;
+    }
+
+    public void setContadorMovimientos(int contadorMovimientos) {
+        this.contadorMovimientos = contadorMovimientos;
+    }
 
     public VentanaTablero() {
         initComponents();
@@ -36,12 +57,11 @@ public class VentanaTablero extends javax.swing.JFrame {
         this.setResizable(false);
         this.setDefaultCloseOperation(EXIT_ON_CLOSE);
         this.setLocationRelativeTo(null);
-        this.modelo = sistema;
+        this.sistema = sistema;
         jugador1 = sistema.getJugador1();
         jugador2 = sistema.getJugador2();
-        turno = jugador1;
-        lbljugador.setText(turno.getAlias());
-        tablero = sistema.getTablero().getTablero();      
+        actualizarTurno();
+        tablero = sistema.getTablero().getTablero();
         //Tamaño por defecto de la ventana (JFrame) al abrirlo
         this.setSize(new Dimension(600, 600));
         panelJuego.setLayout(new GridLayout(8, 9));
@@ -53,14 +73,14 @@ public class VentanaTablero extends javax.swing.JFrame {
                 Ficha ficha = new Ficha(" ", " ", jButton);
                 if (i == 0) {
                     if (j != 0) {
-                        ficha = new Ficha(String.valueOf(j), "AZUL", jugador2, jButton);                 
+                        ficha = new Ficha(String.valueOf(j), "AZUL", jugador2, jButton);
                         tablero[i][j] = ficha;
-                    } else {                         
+                    } else {
                         tablero[i][j] = ficha;
                     }
                 } else if (i == tablero.length - 1) {
                     if (j != tablero[0].length - 1) {
-                        ficha = new Ficha(String.valueOf(largo--), "ROJO", jugador1, jButton);                      
+                        ficha = new Ficha(String.valueOf(largo--), "ROJO", jugador1, jButton);
                         tablero[i][j] = ficha;
                     } else {
                         tablero[i][j] = ficha;
@@ -69,8 +89,8 @@ public class VentanaTablero extends javax.swing.JFrame {
                     tablero[i][j] = ficha;
                 }
                 ficha.getBoton().setForeground(Color.WHITE);
-                ficha.getBoton().setText(ficha.getNro());                
-                switch(ficha.getColor()) {
+                ficha.getBoton().setText(ficha.getNro());
+                switch (ficha.getColor()) {
                     case "ROJO":
                         jButton.setBackground(Color.RED);
                         break;
@@ -80,7 +100,7 @@ public class VentanaTablero extends javax.swing.JFrame {
                     default:
                         jButton.setBackground(Color.WHITE);
                         break;
-                }                
+                }
                 panelJuego.add(ficha.getBoton());
             }
         }
@@ -88,14 +108,7 @@ public class VentanaTablero extends javax.swing.JFrame {
 
     //Método que actualiza el tablero en cada jugada
     public void mostrarTablero(Tablero tablero) {
-        
-    }
-    
-    private void cambiarTurno() {
-        if (contadorTurno % 2 == 0)
-            turno = jugador1;
-        else
-            turno = jugador2;
+
     }
 
     /**
@@ -122,6 +135,7 @@ public class VentanaTablero extends javax.swing.JFrame {
         panelJuego.setBounds(90, 60, 450, 400);
 
         jButton1.setText("Terminar turno");
+        jButton1.setBorder(null);
         getContentPane().add(jButton1);
         jButton1.setBounds(90, 480, 450, 40);
 
@@ -130,9 +144,10 @@ public class VentanaTablero extends javax.swing.JFrame {
         getContentPane().add(jLabel1);
         jLabel1.setBounds(210, 10, 80, 40);
 
+        lbljugador.setFont(new java.awt.Font("Arial Rounded MT Bold", 1, 18)); // NOI18N
         lbljugador.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         getContentPane().add(lbljugador);
-        lbljugador.setBounds(300, 10, 60, 40);
+        lbljugador.setBounds(300, 10, 240, 40);
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -199,19 +214,123 @@ public class VentanaTablero extends javax.swing.JFrame {
         }
     }
 
-    private void clickBoton(int fila, int columna) {        
-        if ((fila + "" + columna).equals(fichaAnterior)) {
-            
-            JOptionPane.showMessageDialog(this, fila + "/" + columna + "igual");
+    private void clickBoton(int fila, int columna) {
+        desmarcarPosiblesMovimientos();
+        if (!sistema.isTerminoPartida()) {
+            boolean opcion = false;
+            if (contadorMovimientos % 2 == 0) {
+                if (this.posiblesMovimientos.isEmpty()) {
+                    if (validarFichaJugador(fila, columna)) {
+                        marcarPosiblesMovimientos(fila, columna);
+                        fichaAnterior = fila + "" + columna;
+                        contadorMovimientos++;
+                    } else {
+                        JOptionPane.showMessageDialog(this, "Movimiento inválido", "Error", JOptionPane.ERROR_MESSAGE);
+                    }
+                } else {
+                    Ficha fichaSeleccionada = tablero[fila][columna];
+                    if (!this.posiblesMovimientos.contains(Integer.parseInt(fichaSeleccionada.getNro()))) {
+                        JOptionPane.showMessageDialog(this, "Movimiento inválido", "Error", JOptionPane.ERROR_MESSAGE);
+                    } else {
+                        if (validarFichaJugador(fila, columna)) {
+                            marcarPosiblesMovimientos(fila, columna);
+                            fichaAnterior = fila + "" + columna;
+                            contadorMovimientos++;
+                        } else {
+                            JOptionPane.showMessageDialog(this, "Movimiento inválido", "Error", JOptionPane.ERROR_MESSAGE);
+                        }
+                    }
+                }
+            } else {
+                if ((fila + "" + columna).equals(fichaAnterior)) {
+                    JOptionPane.showMessageDialog(this, "Debe seleccionar una posición distinta a la original", "Error", JOptionPane.ERROR_MESSAGE);
+                    fichaAnterior = "";
+                    contadorMovimientos++;
+                } else {
+                    try {
+                        for (String posibleMovimiento : this.posiblesJugadas) {
+                            if ((fila + "" + columna).equals(posibleMovimiento.split("/")[0])) {
+                                String movimiento = posibleMovimiento.split("/")[1];
+                                opcion = sistema.validarOpcion(movimiento, sistema.getTurno(), null);
+                                if (opcion) {
+                                    this.posiblesMovimientos = sistema.realizarJugada(movimiento, sistema.getTurno());
+                                    this.cantidadMovimientosTotales++;
+                                    sistema.validarFinalDePartida(cantidadMovimientosTotales);
+                                }
+                                break;
+                            }
+                        }
+                        fichaAnterior = "";
+                        contadorMovimientos++;
+                        sistema.cambiarTurno();
+                        actualizarTurno();
+                        posiblesJugadas.clear();
+                        JOptionPane.showMessageDialog(this, "Movimiento válido!!", "Aviso", JOptionPane.INFORMATION_MESSAGE);
+
+                        //JOptionPane.showMessageDialog(this, fila + "/" + columna + "dif");
+                    } catch (Exception e) {
+                        JOptionPane.showMessageDialog(this, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                    }
+                }
+            }
         } else {
-            JOptionPane.showMessageDialog(this, fila + "/" + columna + "dif");
+            JOptionPane.showMessageDialog(this, "Se terminó la partida", "Aviso", JOptionPane.INFORMATION_MESSAGE);
+            Index index = new Index(sistema);
+            index.setVisible(true);
+            this.dispose();
         }
-        fichaAnterior = fila + "" + columna;
     }
-    
-    private void marcarPosiblesMovimientos (int fila, int columna) {
-        //if (fila == 0)
-        
+
+    private void marcarPosiblesMovimientos(int fila, int columna) {
+        Ficha ficha = tablero[fila][columna];
+        Ficha posibleMovimiento;
+        int color = (ficha.getColor().equals("ROJO")) ? -1 : 1;
+        Border bordePosibleMovimiento = new LineBorder(Color.GREEN, 5);
+        String movimiento = ficha.getNro() + "A";
+        if (sistema.validarMovimiento(movimiento, sistema.getTurno())) {
+            posibleMovimiento = tablero[fila + color][columna];
+            posibleMovimiento.getBoton().setBorder(bordePosibleMovimiento);
+            this.posiblesJugadas.add((fila + color) + "" + columna + "/" + movimiento);
+        }
+        movimiento = ficha.getNro() + "D";
+        if (sistema.validarMovimiento(movimiento, sistema.getTurno())) {
+            posibleMovimiento = tablero[fila + color][columna + 1];
+            posibleMovimiento.getBoton().setBorder(bordePosibleMovimiento);
+            this.posiblesJugadas.add((fila + color) + "" + (columna + 1) + "/" + movimiento);
+        }
+        movimiento = ficha.getNro() + "I";
+        if (sistema.validarMovimiento(movimiento, sistema.getTurno())) {
+            posibleMovimiento = tablero[fila + color][columna - 1];
+            posibleMovimiento.getBoton().setBorder(bordePosibleMovimiento);
+            this.posiblesJugadas.add((fila + color) + "" + (columna - 1) + "/" + movimiento);
+        }
+    }
+
+    private boolean validarFichaJugador(int fila, int columna) {
+        Ficha fichaSeleccionada = tablero[fila][columna];
+        boolean valido = false;
+        if (fichaSeleccionada.getJugador() != null) {
+            if (fichaSeleccionada.getJugador().equals(sistema.getTurno())) {
+                valido = true;
+            }
+        }
+        return valido;
+    }
+
+    public void actualizarTurno() {
+        lbljugador.setText(sistema.getTurno().getAlias());
+    }
+
+    private void desmarcarPosiblesMovimientos() {
+        try {
+            for (int i = 0; i < 8; i++) {
+                for (int j = 0; j < 9; j++) {
+                    tablero[i][j].getBoton().setBorder(null);
+                }
+            }
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
     }
 
 }
