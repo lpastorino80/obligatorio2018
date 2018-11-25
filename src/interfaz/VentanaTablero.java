@@ -25,18 +25,8 @@ public class VentanaTablero extends javax.swing.JFrame {
     private Ficha[][] tablero;
     private Jugador jugador1;
     private Jugador jugador2;
-    private Jugador turno;
     private int contadorMovimientos = 0; // setear en par al arrancar una jugada
-    private int contadorTurnos = 0; // setear en par para que el turno sea del jugador 1, impar para que el turno sea del jugador 2 
     private String fichaAnterior = "";
-    
-    public Jugador getTurno() {
-        return turno;
-    }
-
-    public void setTurno(Jugador turno) {
-        this.turno = turno;
-    }
 
     public int getContadorMovimientos() {
         return contadorMovimientos;
@@ -44,14 +34,6 @@ public class VentanaTablero extends javax.swing.JFrame {
 
     public void setContadorMovimientos(int contadorMovimientos) {
         this.contadorMovimientos = contadorMovimientos;
-    }
-
-    public int getContadorTurnos() {
-        return contadorTurnos;
-    }
-
-    public void setContadorTurnos(int contadorTurnos) {
-        this.contadorTurnos = contadorTurnos;
     }
 
     public VentanaTablero() {
@@ -66,7 +48,6 @@ public class VentanaTablero extends javax.swing.JFrame {
         this.sistema = sistema;
         jugador1 = sistema.getJugador1();
         jugador2 = sistema.getJugador2();
-        cambiarTurno();
         actualizarTurno();
         tablero = sistema.getTablero().getTablero();
         //Tamaño por defecto de la ventana (JFrame) al abrirlo
@@ -116,14 +97,6 @@ public class VentanaTablero extends javax.swing.JFrame {
     //Método que actualiza el tablero en cada jugada
     public void mostrarTablero(Tablero tablero) {
 
-    }
-
-    private void cambiarTurno() {
-        if (contadorTurnos % 2 == 0) {
-            turno = jugador1;
-        } else {
-            turno = jugador2;
-        }
     }
 
     /**
@@ -247,8 +220,7 @@ public class VentanaTablero extends javax.swing.JFrame {
             } else {
                 fichaAnterior = "";
                 contadorMovimientos++;
-                contadorTurnos++;
-                cambiarTurno();
+                sistema.cambiarTurno();
                 actualizarTurno();
                 JOptionPane.showMessageDialog(this, "Movimiento válido!!", "Aviso", JOptionPane.INFORMATION_MESSAGE);
 
@@ -263,17 +235,17 @@ public class VentanaTablero extends javax.swing.JFrame {
         int color = (ficha.getColor().equals("ROJO")) ? -1 : 1;
         Border bordePosibleMovimiento = new LineBorder(Color.GREEN, 5);
         String movimiento = ficha.getNro() + "A";
-        if (sistema.validarMovimiento(movimiento, turno)) {
+        if (sistema.validarMovimiento(movimiento, sistema.getTurno())) {
             posibleMovimiento = tablero[fila + color][columna];
             posibleMovimiento.getBoton().setBorder(bordePosibleMovimiento);
         }
         movimiento = ficha.getNro() + "D";
-        if (sistema.validarMovimiento(movimiento, turno)) {
+        if (sistema.validarMovimiento(movimiento, sistema.getTurno())) {
             posibleMovimiento = tablero[fila + color][columna + 1];
             posibleMovimiento.getBoton().setBorder(bordePosibleMovimiento);
         }
         movimiento = ficha.getNro() + "I";
-        if (sistema.validarMovimiento(movimiento, turno)) {
+        if (sistema.validarMovimiento(movimiento, sistema.getTurno())) {
             posibleMovimiento = tablero[fila + color][columna - 1];
             posibleMovimiento.getBoton().setBorder(bordePosibleMovimiento);
         }
@@ -283,7 +255,7 @@ public class VentanaTablero extends javax.swing.JFrame {
         Ficha fichaSeleccionada = tablero[fila][columna];
         boolean valido = false;
         if (fichaSeleccionada.getJugador() != null) {
-            if (fichaSeleccionada.getJugador().equals(turno)) {
+            if (fichaSeleccionada.getJugador().equals(sistema.getTurno())) {
                 valido = true;
             }
         }
@@ -291,7 +263,7 @@ public class VentanaTablero extends javax.swing.JFrame {
     }
 
     public void actualizarTurno() {
-        lbljugador.setText(turno.getAlias());
+        lbljugador.setText(sistema.getTurno().getAlias());
     }
 
     private void desmarcarPosiblesMovimientos() {
