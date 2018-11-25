@@ -208,18 +208,21 @@ public class Sistema {
                         //posición de la ficha está ocupada
                         switch (direccion) {
                             case "A":
-                                if (this.getTablero().getTablero()[i + fila][j].getColor().equals(" ") && i + fila >= 0 && i + fila <= 7) {
-                                    esValido = true;
+                                if (i + fila >= 0 && i + fila <= 7) {
+                                    if (this.getTablero().getTablero()[i + fila][j].getColor().equals(" "))
+                                        esValido = true;
                                 }
                                 break;
                             case "I":
-                                if (this.getTablero().getTablero()[i + fila][j - 1].getColor().equals(" ") && i + fila >= 0 && i + fila <= 7 && j >= 0 && j <= 8) {
-                                    esValido = true;
+                                if (i + fila >= 0 && i + fila <= 7 && j - 1 >= 0 && j - 1 <= 8) {
+                                    if(this.getTablero().getTablero()[i + fila][j - 1].getColor().equals(" "))
+                                        esValido = true;
                                 }
                                 break;
                             case "D":
-                                if (this.getTablero().getTablero()[i + fila][j + 1].getColor().equals(" ") && i + fila >= 0 && i + fila <= 7 && j >= 0 && j <= 8) {
-                                    esValido = true;
+                                if (i + fila >= 0 && i + fila <= 7 && j + 1>= 0 && j + 1 <= 8) {
+                                    if (this.getTablero().getTablero()[i + fila][j + 1].getColor().equals(" "))
+                                        esValido = true;
                                 }
                                 break;
                         }
