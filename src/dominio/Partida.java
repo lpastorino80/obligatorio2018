@@ -23,6 +23,14 @@ public class Partida implements Comparable<Partida>, Serializable{
     private ArrayList<Movimiento> movimientos;
     private int cantidadMovimientos;
     
+    public Partida() {
+        this.hora = hora;
+        this.jugador1 = jugador1;
+        this.jugador2 = jugador2;
+        this.tipoPartida = tipoPartida;
+        this.movimientos = movimientos;
+    }
+    
     public Partida(Date hora, Jugador jugador1, Jugador jugador2, TipoPartida tipoPartida, ArrayList<Movimiento> movimientos) {
         this.hora = hora;
         this.jugador1 = jugador1;
@@ -103,6 +111,4 @@ public class Partida implements Comparable<Partida>, Serializable{
     public int compareTo(Partida o) {
         return o.getHora().compareTo(this.getHora());
     }
-    
-    
 }
