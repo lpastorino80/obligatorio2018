@@ -4,22 +4,27 @@
  * and open the template in the editor.
  */
 package interfaz;
-
 import dominio.Ficha;
 import dominio.Jugador;
+import dominio.Partida;
 import dominio.Sistema;
-import dominio.Tablero;
-import java.awt.event.*;
-import java.awt.*;
-import javax.swing.*;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.JButton;
+import static javax.swing.JFrame.EXIT_ON_CLOSE;
+import javax.swing.JOptionPane;
 
 /**
  *
  * @author Caro
  */
-public class VentanaTablero extends javax.swing.JFrame {
-
-    private Sistema modelo;
+public class ReplicarPartida extends javax.swing.JFrame {
+    
+    private Sistema sistema;
     private Ficha[][] tablero;
     private Jugador jugador1;
     private Jugador jugador2;
@@ -27,29 +32,53 @@ public class VentanaTablero extends javax.swing.JFrame {
     private int contadorTurno = 0;
     private String fichaAnterior = "";
 
-    public VentanaTablero() {
+    /**
+     * Creates new form ReplicarPartida
+     */
+    public ReplicarPartida() {
         initComponents();
     }
-
-    public VentanaTablero(Sistema sistema) {
+    
+    public ReplicarPartida(java.awt.Frame parent, boolean modal, Sistema sis) {
         initComponents();
+        sistema = sis;
+        //sistema.registrarJugador(new Jugador("as","as",55));
+        
+        DefaultComboBoxModel opcion = new DefaultComboBoxModel();
+        
+        try {
+            if (sistema.getPartidas().size() > 0) {
+                for (Partida partida : sistema.getPartidas()) {
+                    opcion.addElement(partida);
+                }
+                cmbPartidas.setModel(opcion);
+                cmbPartidas.setSelectedIndex(0);
+            }
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
+        
+        
+        this.setSize(new Dimension(600, 600));
         this.setResizable(false);
         this.setDefaultCloseOperation(EXIT_ON_CLOSE);
         this.setLocationRelativeTo(null);
-        this.modelo = sistema;
+        
+        //this.modelo = sistema;
         jugador1 = sistema.getJugador1();
         jugador2 = sistema.getJugador2();
         turno = jugador1;
-        lbljugador.setText(turno.getAlias());
+        lbljug.setText(turno.getAlias());
         tablero = sistema.getTablero().getTablero();      
         //Tamaño por defecto de la ventana (JFrame) al abrirlo
         this.setSize(new Dimension(600, 600));
-        panelJuego.setLayout(new GridLayout(8, 9));
+        
+        panelRepPartida.setLayout(new GridLayout(8, 9));
         int largo = tablero[0].length - 1;
         for (int i = 0; i < 8; i++) {
             for (int j = 0; j < 9; j++) {
                 JButton jButton = new JButton();
-                jButton.addActionListener(new VentanaTablero.ListenerBoton(i, j));
+                jButton.addActionListener(new ReplicarPartida.ListenerBotonRep(i, j));
                 Ficha ficha = new Ficha(" ", " ", jButton);
                 if (i == 0) {
                     if (j != 0) {
@@ -81,21 +110,9 @@ public class VentanaTablero extends javax.swing.JFrame {
                         jButton.setBackground(Color.WHITE);
                         break;
                 }                
-                panelJuego.add(ficha.getBoton());
+                panelRepPartida.add(ficha.getBoton());
             }
         }
-    }
-
-    //Método que actualiza el tablero en cada jugada
-    public void mostrarTablero(Tablero tablero) {
-        
-    }
-    
-    private void cambiarTurno() {
-        if (contadorTurno % 2 == 0)
-            turno = jugador1;
-        else
-            turno = jugador2;
     }
 
     /**
@@ -107,32 +124,53 @@ public class VentanaTablero extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        panelJuego = new javax.swing.JPanel();
-        jButton1 = new javax.swing.JButton();
+        panelRepPartida = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
-        lbljugador = new javax.swing.JLabel();
+        lbljug = new javax.swing.JLabel();
+        jButton1 = new javax.swing.JButton();
+        jButton2 = new javax.swing.JButton();
+        cmbPartidas = new javax.swing.JComboBox<>();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         getContentPane().setLayout(null);
 
-        panelJuego.setBackground(new java.awt.Color(204, 204, 204));
-        panelJuego.setName("panelJuego"); // NOI18N
-        panelJuego.setLayout(null);
-        getContentPane().add(panelJuego);
-        panelJuego.setBounds(90, 60, 450, 400);
+        panelRepPartida.setBackground(new java.awt.Color(204, 204, 204));
 
-        jButton1.setText("Terminar turno");
-        getContentPane().add(jButton1);
-        jButton1.setBounds(90, 480, 450, 40);
+        javax.swing.GroupLayout panelRepPartidaLayout = new javax.swing.GroupLayout(panelRepPartida);
+        panelRepPartida.setLayout(panelRepPartidaLayout);
+        panelRepPartidaLayout.setHorizontalGroup(
+            panelRepPartidaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 450, Short.MAX_VALUE)
+        );
+        panelRepPartidaLayout.setVerticalGroup(
+            panelRepPartidaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 450, Short.MAX_VALUE)
+        );
+
+        getContentPane().add(panelRepPartida);
+        panelRepPartida.setBounds(90, 70, 450, 450);
 
         jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         jLabel1.setText("Turno de: ");
         getContentPane().add(jLabel1);
-        jLabel1.setBounds(210, 10, 80, 40);
+        jLabel1.setBounds(370, 20, 80, 30);
 
-        lbljugador.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        getContentPane().add(lbljugador);
-        lbljugador.setBounds(300, 10, 60, 40);
+        lbljug.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        getContentPane().add(lbljug);
+        lbljug.setBounds(470, 20, 70, 30);
+
+        jButton1.setText("Siguiente movimiento");
+        jButton1.setActionCommand("");
+        getContentPane().add(jButton1);
+        jButton1.setBounds(90, 540, 210, 40);
+
+        jButton2.setText("Retomar partida");
+        getContentPane().add(jButton2);
+        jButton2.setBounds(320, 540, 220, 40);
+
+        cmbPartidas.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        getContentPane().add(cmbPartidas);
+        cmbPartidas.setBounds(90, 20, 180, 30);
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -154,40 +192,46 @@ public class VentanaTablero extends javax.swing.JFrame {
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(Tablero.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(ReplicarPartida.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(Tablero.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(ReplicarPartida.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(Tablero.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(ReplicarPartida.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(Tablero.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(ReplicarPartida.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
         //</editor-fold>
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new VentanaTablero().setVisible(true);
+                RepetirPartida dialog = new RepetirPartida(new javax.swing.JFrame(), true);
+                dialog.addWindowListener(new java.awt.event.WindowAdapter() {
+                    @Override
+                    public void windowClosing(java.awt.event.WindowEvent e) {
+                        System.exit(0);
+                    }
+                });
+                dialog.setVisible(true);
             }
         });
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JComboBox<String> cmbPartidas;
     private javax.swing.JButton jButton1;
+    private javax.swing.JButton jButton2;
     private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel lbljugador;
-    private javax.swing.JPanel panelJuego;
+    private javax.swing.JLabel lbljug;
+    private javax.swing.JPanel panelRepPartida;
     // End of variables declaration//GEN-END:variables
 
-    private class ListenerBoton implements ActionListener {
+    private class ListenerBotonRep implements ActionListener {
 
         private int x;
         private int y;
 
-        public ListenerBoton(int i, int j) {
+        public ListenerBotonRep(int i, int j) {
             // en el constructor se almacena la fila y columna que se presionó
             x = i;
             y = j;
@@ -213,5 +257,4 @@ public class VentanaTablero extends javax.swing.JFrame {
         //if (fila == 0)
         
     }
-
 }

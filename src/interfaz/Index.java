@@ -228,7 +228,7 @@ public class Index extends javax.swing.JFrame {
     }//GEN-LAST:event_jButton3ActionPerformed
 
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
-        RepetirPartida ventana = new RepetirPartida(this, true, sistema);
+        ReplicarPartida ventana = new ReplicarPartida(this, true, sistema);
         ventana.setVisible(true);
 
     }//GEN-LAST:event_jButton4ActionPerformed
