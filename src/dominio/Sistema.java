@@ -14,7 +14,7 @@ import java.util.Collections;
  *
  * @author LuisPastorino, Carolina Perez
  */
-public class Sistema {
+public class Sistema extends java.util.Observable{
     
     private ArrayList<Jugador> jugadores;
     private ArrayList<Partida> partidas;
@@ -160,6 +160,8 @@ public class Sistema {
     
     public void cambiarTurno() {
         this.turno = (turno)?false:true;
+        this.setChanged();
+        notifyObservers();
         this.reproducirSonido("Cuack.wav");
     }
     
