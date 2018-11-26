@@ -14,7 +14,7 @@ import java.util.Collections;
  *
  * @author LuisPastorino, Carolina Perez
  */
-public class Sistema {
+public class Sistema extends java.util.Observable{
     
     private ArrayList<Jugador> jugadores;
     private ArrayList<Partida> partidas;
@@ -256,7 +256,9 @@ public class Sistema {
         this.setJugador1(null);
         this.setJugador2(null);
         this.setPartidaActual(null);
-        this.setTablero(null);        
+        this.setTablero(null);
+        this.setChanged();
+        notifyObservers();
     }
 
     public void empatarPartida(Jugador jugador1, Jugador jugador2) {
@@ -308,19 +310,19 @@ public class Sistema {
     }
     
     public ArrayList<Integer> posiblesMovimientos (Ficha ficha, int fila, int columna) {
-        ArrayList<Integer> posiblesMovimientos = new ArrayList<>(); 
+        ArrayList<Integer> posiblesMovimientos = new ArrayList<>();
         int sumaVertical = this.sumaVertical(ficha, columna);
         int sumaHorizontal = this.sumaHorizontal(ficha, fila);
         if (sumaVertical != -1)
-            if (!fichaSobreBordeOpuesto(new Ficha(String.valueOf(sumaVertical),ficha.getColor())))
+            if (!fichaSobreBordeOpuesto(new Ficha(String.valueOf(sumaVertical),ficha.getColor(),ficha.getJugador(),ficha.getBoton())))
                 posiblesMovimientos.add(sumaVertical);
         if (sumaHorizontal != -1 && !posiblesMovimientos.contains(sumaHorizontal))
-            if (!fichaSobreBordeOpuesto(new Ficha(String.valueOf(sumaHorizontal),ficha.getColor())))
-                posiblesMovimientos.add(sumaHorizontal);  
+            if (!fichaSobreBordeOpuesto(new Ficha(String.valueOf(sumaHorizontal),ficha.getColor(),ficha.getJugador(),ficha.getBoton())))
+                posiblesMovimientos.add(sumaHorizontal);
         ArrayList<Integer> sumaDiagonales = sumaDiagonales(ficha, fila, columna);
         for (Integer i : sumaDiagonales) {
             if (i != -1 && !posiblesMovimientos.contains(i))
-                if (!fichaSobreBordeOpuesto(new Ficha(String.valueOf(i),ficha.getColor())))
+                if (!fichaSobreBordeOpuesto(new Ficha(String.valueOf(i),ficha.getColor(),ficha.getJugador(),ficha.getBoton())))
                     posiblesMovimientos.add(i);
         }
         return posiblesMovimientos;
