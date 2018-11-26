@@ -51,7 +51,13 @@ public class Index extends javax.swing.JFrame {
         this.setDefaultCloseOperation(EXIT_ON_CLOSE);
         this.setLocationRelativeTo(null);
         //this.setExtendedState(MAXIMIZED_BOTH);
-        inicializarDatosDelSistema();
+        try {
+            BordeImagen fondo = new BordeImagen(ImageIO.read(new File("src\\imagenes\\fondoTablero.png")));
+            JPanel panel = (JPanel) this.getContentPane();
+            panel.setBorder(fondo);
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(this, ex.getMessage(), "Error:", JOptionPane.ERROR_MESSAGE);
+        }
     }
 
     private void inicializarDatosDelSistema() {

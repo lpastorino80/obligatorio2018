@@ -72,6 +72,7 @@ public class VentanaTablero extends javax.swing.JFrame implements Observer {
         jugador1 = sistema.getJugador1();
         jugador2 = sistema.getJugador2();
         actualizarTurno();
+        sistema.setTerminoPartida(false);
         tablero = sistema.getTablero().getTablero();
         //Tamaño por defecto de la ventana (JFrame) al abrirlo
         this.setSize(new Dimension(600, 600));
