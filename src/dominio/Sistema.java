@@ -287,7 +287,7 @@ public class Sistema extends java.util.Observable{
             }
         return posiblesMovimientos;
     }
-    
+ 
     public ArrayList<Integer> moverFicha(Ficha ficha, String movimiento, int filaActual, int columnaActual) {
         this.getTablero().getTablero()[filaActual][columnaActual] = new Ficha(" ", " ");
         int upDown = (ficha.getColor().equals("ROJO"))? -1:1;

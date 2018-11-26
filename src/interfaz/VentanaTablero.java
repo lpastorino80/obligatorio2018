@@ -331,6 +331,35 @@ public class VentanaTablero extends javax.swing.JFrame implements Observer {
             }
         } 
     }
+    
+    public Ficha obtenerFichaActual(Movimiento mov) {
+        for (int i=0; i<tablero.length;i++) {
+            for (int j=0; j<tablero[0].length;j++) {
+                Ficha fichaActual = tablero[i][j];
+                if (fichaActual.getNro().equals(mov.getNumeroMovimiento()) && fichaActual.getJugador().equals(mov.getJugador())) 
+                    return fichaActual;
+            }
+        }
+        return null;
+    }
+    
+    public Ficha obtenerFichaDestino(Movimiento mov) {
+        int color = (mov.getJugador().equals(jugador1)? -1:1);
+        for (int i=0; i<tablero.length;i++) {
+            for (int j=0; j<tablero[0].length;j++) {
+                Ficha fichaActual = tablero[i][j];
+                if (fichaActual.getNro().equals(mov.getNumeroMovimiento()) && fichaActual.getJugador().equals(mov.getJugador())) {
+                    if (mov.getDireccionMovimiento() == "I")
+                        return tablero[i + color][j - 1];
+                    if (mov.getDireccionMovimiento() == "A")
+                        return tablero[i + color][j];
+                    if (mov.getDireccionMovimiento() == "D")
+                        return tablero[i + color][j + 1];
+                }                     
+            }
+        }
+        return null;
+    }
 
     public ArrayList<Integer> moverFicha(Ficha fichaOrigen, Ficha fichaDestino, Jugador jugador, int filaOrigen, int columnaOrigen, int filaDestino, int columnaDestino) { 
         fichaDestino.setColor(fichaOrigen.getColor());
