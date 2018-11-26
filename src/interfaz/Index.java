@@ -216,21 +216,31 @@ public class Index extends javax.swing.JFrame {
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-        Jugar ventana = new Jugar(sistema);
-        ventana.setVisible(true);
-        this.dispose();
+        if (sistema.getJugadores().size() < 2) {
+            JOptionPane.showMessageDialog(this, "Deben haber al menos 2 jugadores registrados para jugar!", "Error", JOptionPane.ERROR_MESSAGE);
+        } else {
+            Jugar ventana = new Jugar(sistema);
+            ventana.setVisible(true);
+            this.dispose();
+        }
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
-        Ranking ventana = new Ranking(this, true, sistema);
-        ventana.setVisible(true);
-
+        if (sistema.getJugadores().isEmpty()) {
+            JOptionPane.showMessageDialog(this, "No hay jugadores registrados aún", "Error", JOptionPane.ERROR_MESSAGE);
+        } else {
+            Ranking ventana = new Ranking(this, true, sistema);
+            ventana.setVisible(true);
+        }
     }//GEN-LAST:event_jButton3ActionPerformed
 
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
-        ReplicarPartida ventana = new ReplicarPartida(this, true, sistema);
-        ventana.setVisible(true);
-
+        if (sistema.getPartidas().isEmpty()) {
+            JOptionPane.showMessageDialog(this, "No hay partidas registradas aún", "Error", JOptionPane.ERROR_MESSAGE);
+        } else {
+            ReplicarPartida ventana = new ReplicarPartida(this, true, sistema);
+            ventana.setVisible(true);
+        }
     }//GEN-LAST:event_jButton4ActionPerformed
 
     private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
@@ -261,15 +271,15 @@ public class Index extends javax.swing.JFrame {
                 ArchivoGrabacion grabador = new ArchivoGrabacion(chooser.getSelectedFile() + ".json");
                 grabador.grabarLinea(lista.toString());
                 grabador.cerrar();
-            }catch (Exception e) {
-            
+            } catch (Exception e) {
+
             }
-            }
+        }
     }//GEN-LAST:event_jButton6ActionPerformed
 
     /**
-         * @param args the command line arguments
-         */
+     * @param args the command line arguments
+     */
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">

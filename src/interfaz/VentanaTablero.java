@@ -294,7 +294,7 @@ public class VentanaTablero extends javax.swing.JFrame implements Observer {
                         if (validarFichaJugador(fila, columna)) {
                             fichaAnterior = fila + "" + columna;  
                             contadorMovimientos = true;
-                            this.posiblesMovimientos.clear();
+                            //this.posiblesMovimientos.clear();
                         } else {
                             JOptionPane.showMessageDialog(this, "Movimiento inválido", "Error", JOptionPane.ERROR_MESSAGE);  
                             fichaAnterior = "";
