@@ -4,6 +4,7 @@
  * and open the template in the editor.
  */
 package interfaz;
+
 import dominio.Ficha;
 import dominio.Jugador;
 import dominio.Movimiento;
@@ -29,7 +30,7 @@ import javax.swing.JOptionPane;
  * @author Caro
  */
 public class ReplicarPartida extends javax.swing.JFrame {
-    
+
     private Sistema sistema;
     private Ficha[][] tablero;
     private Jugador jugador1;
@@ -37,15 +38,20 @@ public class ReplicarPartida extends javax.swing.JFrame {
     private Jugador turno;
     private int contadorTurno = 0;
     private String fichaAnterior = "";
-    
+    private Partida partidaSel;
+    private Movimiento mov;
+    private int indiceMov = -1;
+
+    private boolean contadorMovimientos = false;
+    private int cantidadMovimientosTotales = 0;
 
     /**
      * Creates new form ReplicarPartida
      */
-    public ReplicarPartida(){
+    public ReplicarPartida() {
         initComponents();
     }
-    
+
     public ReplicarPartida(java.awt.Frame parent, boolean modal, Sistema sis) {
         initComponents();
         this.sistema = sis;
@@ -80,13 +86,11 @@ public class ReplicarPartida extends javax.swing.JFrame {
         } catch (Exception e) {
             JOptionPane.showMessageDialog(this, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
-        
-//      turno = jugador1;
-//      lbljug.setText(turno.getAlias());
+
         if (sistema.getTablero() == null) {
             sistema.setTablero(new Tablero());
         }
-                
+
         this.tablero = sistema.getTablero().getTablero();
         this.panelRepPartida.setLayout(new GridLayout(8, 9));
         int largo = tablero[0].length - 1;
@@ -97,14 +101,14 @@ public class ReplicarPartida extends javax.swing.JFrame {
                 Ficha ficha = new Ficha(" ", " ", jButton);
                 if (i == 0) {
                     if (j != 0) {
-                        ficha = new Ficha(String.valueOf(j), "AZUL", jugador2, jButton);                 
+                        ficha = new Ficha(String.valueOf(j), "AZUL", jugador2, jButton);
                         tablero[i][j] = ficha;
-                    } else {                         
+                    } else {
                         tablero[i][j] = ficha;
                     }
                 } else if (i == tablero.length - 1) {
                     if (j != tablero[0].length - 1) {
-                        ficha = new Ficha(String.valueOf(largo--), "ROJO", jugador1, jButton);                      
+                        ficha = new Ficha(String.valueOf(largo--), "ROJO", jugador1, jButton);
                         tablero[i][j] = ficha;
                     } else {
                         tablero[i][j] = ficha;
@@ -113,8 +117,8 @@ public class ReplicarPartida extends javax.swing.JFrame {
                     tablero[i][j] = ficha;
                 }
                 ficha.getBoton().setForeground(Color.WHITE);
-                ficha.getBoton().setText(ficha.getNro());                
-                switch(ficha.getColor()) {
+                ficha.getBoton().setText(ficha.getNro());
+                switch (ficha.getColor()) {
                     case "ROJO":
                         jButton.setBackground(Color.RED);
                         break;
@@ -124,37 +128,39 @@ public class ReplicarPartida extends javax.swing.JFrame {
                     default:
                         jButton.setBackground(Color.WHITE);
                         break;
-                }                
+                }
                 panelRepPartida.add(ficha.getBoton());
             }
         }
     }
+
+//    public void actualizarTurno() {
+//        lbljug.setText(sistema.getTurno().getAlias());
+//    }
     
-    
-    public void replicarPartida(){
-        //Acá debe traer el valor del combo seleccionado
-        Partida partidaSel = (Partida) cmbPartidas.getSelectedItem();
-        //TipoPartida.getString(tipoPartida);
-        sistema.setJugador1(partidaSel.getJugador1());
-        sistema.setJugador2(partidaSel.getJugador2());
-        Partida partidaActual = null;
-        if (partidaSel.getTipoPartida().equals(TipoPartida.CANTIDAD_MOVIMIENTOS)) {
-            partidaActual = new Partida(partidaSel.getHora(), partidaSel.getJugador1(), partidaSel.getJugador2(), partidaSel.getTipoPartida(), new ArrayList<Movimiento>(), partidaSel.getCantidadMovimientos());
-        } else {
-            partidaActual = new Partida(partidaSel.getHora(), partidaSel.getJugador1(), partidaSel.getJugador2(), partidaSel.getTipoPartida(), new ArrayList<Movimiento>());
+    //Método que actualiza el tablero en cada jugada
+    public void mostrarTablero() {
+        panelRepPartida.removeAll();
+        for (int i = 0; i < 8; i++) {
+            for (int j = 0; j < 9; j++) {
+                Ficha ficha = tablero[i][j];
+                Color fondo;
+                String texto = " ";
+                if (ficha.getColor() != " ") {
+                    fondo = (ficha.getColor() == "ROJO") ? Color.RED : Color.BLUE;
+                    texto = ficha.getNro();
+                    ficha.getBoton().setBackground(fondo);
+                    ficha.getBoton().setText(texto);
+                } else {
+                    ficha.getBoton().setBackground(null);
+                    ficha.getBoton().setText(texto);
+                }
+                panelRepPartida.add(ficha.getBoton());
+            }
         }
-        sistema.setPartidaActual(partidaActual);
-        for (Movimiento movimiento : partidaSel.getMovimientos()) {
-            String alias = movimiento.getJugador().getAlias();
-            lbljug.setText(alias);            
-            //String movimiento = movimiento.getMovimiento();
-            sistema.realizarJugada(movimiento.getMovimiento(), movimiento.getJugador());
-            //mostrarTablero(sistema.getTablero());
-            //lector.nextLine();
-            //replicarPartida();
-        }
+        this.validate();
+        this.repaint();        
     }
-    
     
 
     /**
@@ -167,11 +173,12 @@ public class ReplicarPartida extends javax.swing.JFrame {
     private void initComponents() {
 
         panelRepPartida = new javax.swing.JPanel();
-        jLabel1 = new javax.swing.JLabel();
-        lbljug = new javax.swing.JLabel();
         jButton1 = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
         cmbPartidas = new javax.swing.JComboBox<>();
+        jButton3 = new javax.swing.JButton();
+        jLabel1 = new javax.swing.JLabel();
+        lbljugador = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         getContentPane().setLayout(null);
@@ -179,16 +186,7 @@ public class ReplicarPartida extends javax.swing.JFrame {
         panelRepPartida.setBackground(new java.awt.Color(204, 204, 204));
         panelRepPartida.setLayout(null);
         getContentPane().add(panelRepPartida);
-        panelRepPartida.setBounds(90, 70, 450, 450);
-
-        jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
-        jLabel1.setText("Turno de: ");
-        getContentPane().add(jLabel1);
-        jLabel1.setBounds(370, 20, 80, 30);
-
-        lbljug.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        getContentPane().add(lbljug);
-        lbljug.setBounds(470, 20, 70, 30);
+        panelRepPartida.setBounds(90, 120, 450, 450);
 
         jButton1.setText("Siguiente movimiento");
         jButton1.setActionCommand("");
@@ -198,23 +196,71 @@ public class ReplicarPartida extends javax.swing.JFrame {
             }
         });
         getContentPane().add(jButton1);
-        jButton1.setBounds(90, 540, 210, 40);
+        jButton1.setBounds(90, 590, 210, 40);
 
         jButton2.setText("Retomar partida");
         getContentPane().add(jButton2);
-        jButton2.setBounds(320, 540, 220, 40);
+        jButton2.setBounds(320, 590, 220, 40);
 
         cmbPartidas.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        cmbPartidas.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cmbPartidasActionPerformed(evt);
+            }
+        });
         getContentPane().add(cmbPartidas);
-        cmbPartidas.setBounds(90, 20, 270, 30);
+        cmbPartidas.setBounds(90, 20, 330, 30);
+
+        jButton3.setText("Cargar partida");
+        jButton3.setActionCommand("");
+        jButton3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton3ActionPerformed(evt);
+            }
+        });
+        getContentPane().add(jButton3);
+        jButton3.setBounds(437, 20, 103, 30);
+
+        jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        jLabel1.setText("Turno de: ");
+        getContentPane().add(jLabel1);
+        jLabel1.setBounds(270, 70, 80, 40);
+
+        lbljugador.setFont(new java.awt.Font("Arial Rounded MT Bold", 1, 18)); // NOI18N
+        lbljugador.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        getContentPane().add(lbljugador);
+        lbljugador.setBounds(370, 70, 170, 40);
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        
-        replicarPartida();
+        indiceMov++;              
+        Movimiento mov = partidaSel.getMovimientos().get(indiceMov);        
+        //sistema.realizarJugada(mov.getMovimiento(), mov.getJugador());
+        sistema.getPartidaActual().agregarMovimiento(mov);
+        this.moverFicha(tablero[Integer.parseInt(fichaAnterior.substring(0,1))][Integer.parseInt(fichaAnterior.substring(1,2))], tablero[fila][columna], sistema.getTurno(),Integer.parseInt(fichaAnterior.substring(0,1)),Integer.parseInt(fichaAnterior.substring(1,2)),fila,columna);                        
+        this.cantidadMovimientosTotales++;
+        mostrarTablero();
     }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void cmbPartidasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmbPartidasActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_cmbPartidasActionPerformed
+
+    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
+        cmbPartidas.setEnabled(false);
+        partidaSel = (Partida) cmbPartidas.getSelectedItem();
+        sistema.setJugador1(partidaSel.getJugador1());
+        sistema.setJugador2(partidaSel.getJugador2());
+        Partida partidaActual = null;
+        if (partidaSel.getTipoPartida().equals(TipoPartida.CANTIDAD_MOVIMIENTOS)) {
+            partidaActual = new Partida(partidaSel.getHora(), partidaSel.getJugador1(), partidaSel.getJugador2(), partidaSel.getTipoPartida(), new ArrayList<Movimiento>(), partidaSel.getCantidadMovimientos());
+        } else {
+            partidaActual = new Partida(partidaSel.getHora(), partidaSel.getJugador1(), partidaSel.getJugador2(), partidaSel.getTipoPartida(), new ArrayList<Movimiento>());
+        }
+        sistema.setPartidaActual(partidaActual);
+    }//GEN-LAST:event_jButton3ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -262,8 +308,9 @@ public class ReplicarPartida extends javax.swing.JFrame {
     private javax.swing.JComboBox<String> cmbPartidas;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
+    private javax.swing.JButton jButton3;
     private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel lbljug;
+    private javax.swing.JLabel lbljugador;
     private javax.swing.JPanel panelRepPartida;
     // End of variables declaration//GEN-END:variables
 
@@ -284,15 +331,19 @@ public class ReplicarPartida extends javax.swing.JFrame {
         }
     }
 
-    private void clickBoton(int fila, int columna) {        
-//        if ((fila + "" + columna).equals(fichaAnterior)) {
-//            
-//            JOptionPane.showMessageDialog(this, fila + "/" + columna + "igual");
-//        } else {
-//            JOptionPane.showMessageDialog(this, fila + "/" + columna + "dif");
-//        }
-//        fichaAnterior = fila + "" + columna;
-
+    private void clickBoton(int fila, int columna) {
         
     }
+
+    public void moverFicha(Ficha fichaOrigen, Ficha fichaDestino, Jugador jugador) {
+        fichaDestino.setColor(fichaOrigen.getColor());
+        fichaDestino.setNro(fichaOrigen.getNro());
+        fichaDestino.setJugador(jugador);
+        fichaOrigen.setColor(" ");
+        fichaOrigen.setNro(" ");
+        fichaOrigen.setJugador(null);
+        //return sistema.posiblesMovimientos(fichaDestino, filaDestino, columnaDestino);
+    }
+    
+    
 }
