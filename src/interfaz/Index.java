@@ -241,7 +241,7 @@ public class Index extends javax.swing.JFrame {
     }//GEN-LAST:event_jButton3ActionPerformed
 
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
-        if (sistema.getPartidas().isEmpty()) {
+        if (sistema.getPartidas().size()<0) {
             JOptionPane.showMessageDialog(this, "No hay partidas registradas aún", "Error", JOptionPane.ERROR_MESSAGE);
         } else {
             ReplicarPartida ventana = new ReplicarPartida(this, true, sistema);
