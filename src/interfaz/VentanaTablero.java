@@ -7,6 +7,7 @@ package interfaz;
 
 import dominio.Ficha;
 import dominio.Jugador;
+import dominio.Movimiento;
 import dominio.Sistema;
 import dominio.Tablero;
 import java.awt.event.*;
@@ -15,8 +16,6 @@ import java.util.ArrayList;
 import java.util.Observable;
 import java.util.Observer;
 import javax.swing.*;
-import javax.swing.border.Border;
-import javax.swing.border.LineBorder;
 
 /**
  *
@@ -54,8 +53,13 @@ public class VentanaTablero extends javax.swing.JFrame implements Observer {
         initComponents();
     }
 
+    @Override
+    @SuppressWarnings("unchecked")
     public void update(Observable obs, Object obj) {
-        mostrarTablero();
+        JOptionPane.showMessageDialog(this, "Se terminó la partida", "Aviso", JOptionPane.INFORMATION_MESSAGE);
+        Index index = new Index(sistema);
+        index.setVisible(true);
+        this.dispose();
     }
 
     public VentanaTablero(Sistema sistema) {
@@ -64,6 +68,7 @@ public class VentanaTablero extends javax.swing.JFrame implements Observer {
         this.setDefaultCloseOperation(EXIT_ON_CLOSE);
         this.setLocationRelativeTo(null);
         this.sistema = sistema;
+        sistema.addObserver(this);
         jugador1 = sistema.getJugador1();
         jugador2 = sistema.getJugador2();
         actualizarTurno();
@@ -140,6 +145,7 @@ public class VentanaTablero extends javax.swing.JFrame implements Observer {
 //        ficha = new Ficha(" ", " ", jButton);
 //        panelJuego.add(ficha.getBoton());
         this.validate();
+        this.repaint();
     }
 
     /**
@@ -164,12 +170,17 @@ public class VentanaTablero extends javax.swing.JFrame implements Observer {
         panelJuego.setName("panelJuego"); // NOI18N
         panelJuego.setLayout(null);
         getContentPane().add(panelJuego);
-        panelJuego.setBounds(80, 170, 450, 400);
+        panelJuego.setBounds(80, 100, 450, 400);
 
         jButton1.setText("Terminar turno");
         jButton1.setBorder(null);
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
         getContentPane().add(jButton1);
-        jButton1.setBounds(80, 580, 450, 40);
+        jButton1.setBounds(80, 510, 450, 40);
 
         jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         jLabel1.setText("Turno de: ");
@@ -183,10 +194,21 @@ public class VentanaTablero extends javax.swing.JFrame implements Observer {
 
         lblPosiblesMovimientos.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         getContentPane().add(lblPosiblesMovimientos);
-        lblPosiblesMovimientos.setBounds(80, 134, 450, 30);
+        lblPosiblesMovimientos.setBounds(80, 60, 450, 30);
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        if (!posiblesMovimientos.isEmpty()) {
+            posiblesMovimientos.clear();
+            borrarPosiblesMovimientos();
+            fichaAnterior = "";
+            sistema.cambiarTurno();
+            actualizarTurno();
+        } else 
+            JOptionPane.showMessageDialog(this, "No se puede pasar el turno aún", "Error", JOptionPane.ERROR_MESSAGE);
+    }//GEN-LAST:event_jButton1ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -285,30 +307,38 @@ public class VentanaTablero extends javax.swing.JFrame implements Observer {
                     String movimiento = construirMovimiento(fila, columna);
                     opcion = sistema.validarOpcion(movimiento, sistema.getTurno(), null);
                     if (opcion) {
-                        this.posiblesMovimientos = sistema.realizarJugada(movimiento, sistema.getTurno());
+                        Movimiento mov = new Movimiento(movimiento, sistema.getTurno());
+                        sistema.getPartidaActual().agregarMovimiento(mov);
+                        posiblesMovimientos = this.moverFicha(tablero[Integer.parseInt(fichaAnterior.substring(0,1))][Integer.parseInt(fichaAnterior.substring(1,2))], tablero[fila][columna], sistema.getTurno(),Integer.parseInt(fichaAnterior.substring(0,1)),Integer.parseInt(fichaAnterior.substring(1,2)),fila,columna);                        
                         this.cantidadMovimientosTotales++;
-                        JOptionPane.showMessageDialog(this, "Movimiento válido!!", "Aviso", JOptionPane.INFORMATION_MESSAGE);
+                        mostrarTablero();
                         sistema.validarFinalDePartida(cantidadMovimientosTotales);
                         if (this.posiblesMovimientos.isEmpty()) {                            
                             sistema.cambiarTurno();
                             actualizarTurno();
-                            desmarcarPosiblesMovimientos();
+                            borrarPosiblesMovimientos();
                         }
                         else 
                             mostrarPosiblesMovimientos(posiblesMovimientos);
-                    }                    
+                    } else 
+                        JOptionPane.showMessageDialog(this, "Movimiento inválido", "Error", JOptionPane.ERROR_MESSAGE);
                     fichaAnterior = ""; 
                 } catch (Exception e) {
                     JOptionPane.showMessageDialog(this, "Movimiento inválido", "Error", JOptionPane.ERROR_MESSAGE);
                     fichaAnterior = "";                    
                 }
             }
-        } else {
-            JOptionPane.showMessageDialog(this, "Se terminó la partida", "Aviso", JOptionPane.INFORMATION_MESSAGE);
-            Index index = new Index(sistema);
-            index.setVisible(true);
-            this.dispose();
-        }
+        } 
+    }
+
+    public ArrayList<Integer> moverFicha(Ficha fichaOrigen, Ficha fichaDestino, Jugador jugador, int filaOrigen, int columnaOrigen, int filaDestino, int columnaDestino) { 
+        fichaDestino.setColor(fichaOrigen.getColor());
+        fichaDestino.setNro(fichaOrigen.getNro());
+        fichaDestino.setJugador(jugador);       
+        fichaOrigen.setColor(" ");
+        fichaOrigen.setNro(" ");
+        fichaOrigen.setJugador(null);
+        return sistema.posiblesMovimientos(fichaDestino, filaDestino, columnaDestino);
     }
     
     public void mostrarPosiblesMovimientos(ArrayList<Integer> lista) {
