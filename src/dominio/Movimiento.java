@@ -60,7 +60,7 @@ public class Movimiento implements Serializable{
         this.movimiento = movimiento;
         this.jugador = jugador;
     }
-
+    
     public String getMovimiento() {
         return movimiento;
     }

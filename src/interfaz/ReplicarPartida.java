@@ -6,13 +6,19 @@
 package interfaz;
 import dominio.Ficha;
 import dominio.Jugador;
+import dominio.Movimiento;
 import dominio.Partida;
 import dominio.Sistema;
+import dominio.Tablero;
+import dominio.TipoPartida;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.Scanner;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import static javax.swing.JFrame.EXIT_ON_CLOSE;
@@ -31,21 +37,38 @@ public class ReplicarPartida extends javax.swing.JFrame {
     private Jugador turno;
     private int contadorTurno = 0;
     private String fichaAnterior = "";
+    
 
     /**
      * Creates new form ReplicarPartida
      */
-    public ReplicarPartida() {
+    public ReplicarPartida(){
         initComponents();
     }
     
     public ReplicarPartida(java.awt.Frame parent, boolean modal, Sistema sis) {
         initComponents();
-        sistema = sis;
-        //sistema.registrarJugador(new Jugador("as","as",55));
-        
+        this.sistema = sis;
+
+        //Datos de prueba
+        //Acá debe venir una partida real
+        Jugador jug1 = new Jugador("Caro", "Caro", 30);
+        Jugador jug2 = new Jugador("Bruno", "Bruno", 27);
+        TipoPartida tipo = TipoPartida.UNA_FICHA_AL_OTRO_LADO;
+        ArrayList<Movimiento> movs = new ArrayList<>();
+        movs.add(new Movimiento("8A", jug1));
+        movs.add(new Movimiento("8D", jug1));
+        movs.add(new Movimiento("1A", jug2));
+        movs.add(new Movimiento("6I", jug1));
+        Partida part = new Partida(new Date(), jug1, jug2, tipo, movs);
+        this.sistema.getPartidas().add(part);
+
+        this.setSize(new Dimension(650, 650));
+        this.setResizable(false);
+        this.setDefaultCloseOperation(EXIT_ON_CLOSE);
+        this.setLocationRelativeTo(null);
+
         DefaultComboBoxModel opcion = new DefaultComboBoxModel();
-        
         try {
             if (sistema.getPartidas().size() > 0) {
                 for (Partida partida : sistema.getPartidas()) {
@@ -58,22 +81,14 @@ public class ReplicarPartida extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(this, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
         
-        
-        this.setSize(new Dimension(600, 600));
-        this.setResizable(false);
-        this.setDefaultCloseOperation(EXIT_ON_CLOSE);
-        this.setLocationRelativeTo(null);
-        
-        //this.modelo = sistema;
-        jugador1 = sistema.getJugador1();
-        jugador2 = sistema.getJugador2();
-        turno = jugador1;
-        lbljug.setText(turno.getAlias());
-        tablero = sistema.getTablero().getTablero();      
-        //Tamaño por defecto de la ventana (JFrame) al abrirlo
-        this.setSize(new Dimension(600, 600));
-        
-        panelRepPartida.setLayout(new GridLayout(8, 9));
+//      turno = jugador1;
+//      lbljug.setText(turno.getAlias());
+        if (sistema.getTablero() == null) {
+            sistema.setTablero(new Tablero());
+        }
+                
+        this.tablero = sistema.getTablero().getTablero();
+        this.panelRepPartida.setLayout(new GridLayout(8, 9));
         int largo = tablero[0].length - 1;
         for (int i = 0; i < 8; i++) {
             for (int j = 0; j < 9; j++) {
@@ -114,6 +129,33 @@ public class ReplicarPartida extends javax.swing.JFrame {
             }
         }
     }
+    
+    
+    public void replicarPartida(){
+        //Acá debe traer el valor del combo seleccionado
+        Partida partidaSel = (Partida) cmbPartidas.getSelectedItem();
+        //TipoPartida.getString(tipoPartida);
+        sistema.setJugador1(partidaSel.getJugador1());
+        sistema.setJugador2(partidaSel.getJugador2());
+        Partida partidaActual = null;
+        if (partidaSel.getTipoPartida().equals(TipoPartida.CANTIDAD_MOVIMIENTOS)) {
+            partidaActual = new Partida(partidaSel.getHora(), partidaSel.getJugador1(), partidaSel.getJugador2(), partidaSel.getTipoPartida(), new ArrayList<Movimiento>(), partidaSel.getCantidadMovimientos());
+        } else {
+            partidaActual = new Partida(partidaSel.getHora(), partidaSel.getJugador1(), partidaSel.getJugador2(), partidaSel.getTipoPartida(), new ArrayList<Movimiento>());
+        }
+        sistema.setPartidaActual(partidaActual);
+        for (Movimiento movimiento : partidaSel.getMovimientos()) {
+            String alias = movimiento.getJugador().getAlias();
+            lbljug.setText(alias);            
+            //String movimiento = movimiento.getMovimiento();
+            sistema.realizarJugada(movimiento.getMovimiento(), movimiento.getJugador());
+            //mostrarTablero(sistema.getTablero());
+            //lector.nextLine();
+            //replicarPartida();
+        }
+    }
+    
+    
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -135,18 +177,7 @@ public class ReplicarPartida extends javax.swing.JFrame {
         getContentPane().setLayout(null);
 
         panelRepPartida.setBackground(new java.awt.Color(204, 204, 204));
-
-        javax.swing.GroupLayout panelRepPartidaLayout = new javax.swing.GroupLayout(panelRepPartida);
-        panelRepPartida.setLayout(panelRepPartidaLayout);
-        panelRepPartidaLayout.setHorizontalGroup(
-            panelRepPartidaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 450, Short.MAX_VALUE)
-        );
-        panelRepPartidaLayout.setVerticalGroup(
-            panelRepPartidaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 450, Short.MAX_VALUE)
-        );
-
+        panelRepPartida.setLayout(null);
         getContentPane().add(panelRepPartida);
         panelRepPartida.setBounds(90, 70, 450, 450);
 
@@ -161,6 +192,11 @@ public class ReplicarPartida extends javax.swing.JFrame {
 
         jButton1.setText("Siguiente movimiento");
         jButton1.setActionCommand("");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
         getContentPane().add(jButton1);
         jButton1.setBounds(90, 540, 210, 40);
 
@@ -170,10 +206,15 @@ public class ReplicarPartida extends javax.swing.JFrame {
 
         cmbPartidas.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
         getContentPane().add(cmbPartidas);
-        cmbPartidas.setBounds(90, 20, 180, 30);
+        cmbPartidas.setBounds(90, 20, 270, 30);
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        
+        replicarPartida();
+    }//GEN-LAST:event_jButton1ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -244,17 +285,14 @@ public class ReplicarPartida extends javax.swing.JFrame {
     }
 
     private void clickBoton(int fila, int columna) {        
-        if ((fila + "" + columna).equals(fichaAnterior)) {
-            
-            JOptionPane.showMessageDialog(this, fila + "/" + columna + "igual");
-        } else {
-            JOptionPane.showMessageDialog(this, fila + "/" + columna + "dif");
-        }
-        fichaAnterior = fila + "" + columna;
-    }
-    
-    private void marcarPosiblesMovimientos (int fila, int columna) {
-        //if (fila == 0)
+//        if ((fila + "" + columna).equals(fichaAnterior)) {
+//            
+//            JOptionPane.showMessageDialog(this, fila + "/" + columna + "igual");
+//        } else {
+//            JOptionPane.showMessageDialog(this, fila + "/" + columna + "dif");
+//        }
+//        fichaAnterior = fila + "" + columna;
+
         
     }
 }

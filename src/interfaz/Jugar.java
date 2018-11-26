@@ -342,7 +342,7 @@ public class Jugar extends javax.swing.JFrame {
 
     }//GEN-LAST:event_btnJugarActionPerformed
 
-    private void comenzarPartida() {
+    private void comenzarPartida(){
         int opcion = JOptionPane.showConfirmDialog(this, "Jugador 1: " + ((Jugador) cbJugador1.getSelectedItem()).getAlias() + "\nJugador 2: " + ((Jugador) cbJugador2.getSelectedItem()).getAlias() + "\nTipo de Partida: " + TipoPartida.getString(tipoPartida) + "\n\nComenzar partida con esta configuración?", "Confirmación de datos", JOptionPane.YES_NO_OPTION);
         if (opcion == 0) {// yes option
             sistema.setJugador1((Jugador) cbJugador1.getSelectedItem());
@@ -357,8 +357,7 @@ public class Jugar extends javax.swing.JFrame {
             sistema.setTablero(new Tablero());
             VentanaTablero tablero = new VentanaTablero(sistema);
             tablero.setVisible(true);
-            this.dispose();
-            
+            this.dispose();           
         }
     }
 
